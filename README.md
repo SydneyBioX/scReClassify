@@ -27,12 +27,6 @@ devtools::install_github("SydneyBioX/scReClassify", build_vignettes = TRUE)
 library(scReClassify)
 ```
 
-**NOTE:** *For mac users, the official cran mirror of R tools for OS X
-and R tools for OS X on r.research.att.com that lists the gfortran
-binary are out of date. You will need to update gfortran and add the
-following line `FLIBS=-L/usr/local/Cellar/gcc/X.Y.Z/lib/gcc/X` (where
-`X.Y.Z` is your gcc version) to `~/.R/Makevars` prior to this package
-installation.*
 
 # Usage
 
