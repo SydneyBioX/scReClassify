@@ -187,3 +187,8 @@ boxplot(c1[marker,], c2[marker,], c3[marker,], c4[marker,], c5[marker,], c6[mark
 points(1, dat.processed[marker, which(colnames(dat.processed) %in% "E13.5_C20")], pch=16, col="red", cex=2)
 #####
 ```
+
+# Reference
+scReClassify is published in BMC Genomics. Please refer to the following article for more details on method implementation and evaluation.
+
+Taiyun Kim, Kitty Lo, Thomas A. Geddes, Hani Jieun Kim, Jean Yee Hwa Yang & Pengyi Yang (2019) scReClassify: post hoc cell type classification of single-cell RNA-seq data. BMC Genomics, 20:913. https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-019-6305-x
