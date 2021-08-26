@@ -4,7 +4,7 @@
 \alias{bAccuracy}
 \title{bAccuracy}
 \usage{
-bAccuracy(truth, final)
+bAccuracy(cls.truth, final)
 }
 \arguments{
 \item{cls.truth}{A vector true class label.}

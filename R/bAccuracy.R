@@ -5,14 +5,15 @@
 #' @param cls.truth A vector true class label.
 #' @param final A vector of final classified label prediction from XXX.
 #' @return An accuracy value.
-#' @usage bAccuracy(truth, final)
+#' @usage bAccuracy(cls.truth, final)
 #' @author Pengyi Yang
 #' @export bAccuracy
 bAccuracy <- function(cls.truth, final) {
-  gs <- names(table(cls.truth))
-  acc <- c()
-  for (i in 1:length(gs)) {
-    acc <- c(acc, sum((cls.truth == final)[cls.truth==gs[i]]) / sum(cls.truth==gs[i]))
-  }
-  mean(acc)
+    gs <- names(table(cls.truth))
+    acc <- c()
+    for (i in seq_len(length(gs))) {
+        acc <- c(acc, sum((cls.truth == final)[cls.truth==gs[i]]) /
+                sum(cls.truth==gs[i]))
+    }
+    mean(acc)
 }

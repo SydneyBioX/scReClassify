@@ -4,14 +4,13 @@
 \alias{multiAdaSampling}
 \title{multi Adaptive Sampling function}
 \usage{
-multiAdaSampling(dat, lab)
+multiAdaSampling(data, label, classifier="svm", percent=1,
+L=10, prob=FALSE, balance=FALSE, iter=3)
 }
 \arguments{
 \item{data}{A dimension reduced matrix.}
 
 \item{label}{A vector of label information for each sample.}
-
-\item{seed}{Seed before base classifier model.}
 
 \item{classifier}{Base classifier model, either  "SVM" or "RF"}
 
@@ -21,25 +20,27 @@ multiAdaSampling(dat, lab)
 
 \item{prob}{logical flag to return sample's probabilities to each class.}
 
-\item{balance}{logical flag to down sample large cell types classes to the median of all class sizes.}
+\item{balance}{logical flag to down sample large cell types classes to the
+median of all class sizes.}
 
 \item{iter}{A number of iterations to perform adaSampling.}
 }
 \value{
-A final prediction, probabilities for each cell type and the model are returned as a list.
+A final prediction, probabilities for each cell type and the model
+are returned as a list.
 }
 \description{
 Performs multiple Adaptive sampling to train a classifier model
 }
 \examples{
-data("GSE87795_liver.development.data")
+data("gse87795_subset")
 
-mat.expr = GSE87795_liver.development.data$data
-cellTypes = GSE87795_liver.development.data$cellTypes
+mat.expr = dat
 
 mat.pc = matPCs(mat.expr)
 
-result = multiAdaSampling(mat.pc, cellTypes, seed = 1, classifier = "svm", percent = 1, L = 10)
+result = multiAdaSampling(mat.pc, cellTypes, classifier = "svm",
+percent = 1, L = 10)
 }
 \author{
 Pengyi Yang

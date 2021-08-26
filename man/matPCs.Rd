@@ -4,14 +4,12 @@
 \alias{matPCs}
 \title{matPCs function}
 \usage{
-matPCs(dat)
+matPCs(data, percentVar=0.8)
 }
 \arguments{
 \item{data}{Prediction model generated from "multiAdaSampling".}
 
 \item{percentVar}{A dimension reduced matrix.}
-
-\item{seed}{seed for randomisation.}
 }
 \value{
 Dimensionally reduced matrix.
@@ -20,17 +18,19 @@ Dimensionally reduced matrix.
 Performs PCA on a given matrix
 }
 \details{
-This function performs PCA to reduce the dimension of the gene expression matrix limited from 10 to 20 PCs.
+This function performs PCA to reduce the dimension of the gene
+expression matrix limited from 10 to 20 PCs.
 }
 \examples{
-data("GSE87795_liver.development.data")
+data("gse87795_subset")
 
-mat.expr = GSE87795_liver.development.data$data
+mat.expr = dat
 
 mat.pc = matPCs(mat.expr)
 
 # to capture at least 70\% of overall variability in the dataset,
 mat.dim.reduct.70 = matPCs(mat.expr, 0.7)
+
 }
 \author{
 Pengyi Yang, Taiyun Kim
