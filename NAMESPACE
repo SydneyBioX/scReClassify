@@ -3,7 +3,6 @@
 export(bAccuracy)
 export(matPCs)
 export(multiAdaSampling)
-import(stats)
 importFrom(e1071,svm)
 importFrom(randomForest,randomForest)
 importFrom(stats,median)

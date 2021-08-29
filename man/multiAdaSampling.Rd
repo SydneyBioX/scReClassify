@@ -43,5 +43,5 @@ result = multiAdaSampling(mat.pc, cellTypes, classifier = "svm",
 percent = 1, L = 10)
 }
 \author{
-Pengyi Yang
+Pengyi Yang, Taiyun Kim
 }

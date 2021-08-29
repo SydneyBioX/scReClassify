@@ -2,19 +2,19 @@
 title: "An introduction to scReClassify package"
 author: 
 - name: Taiyun Kim
-    affiliation:
-    - School of Mathematics and Statistics, The University of Sydney
-    - Computational Systems Biology Group, Children’s Medical Research Institute, Faculty of Medicine and Health, The University of Sydney
-    - Charles Perkins Centre, The University of Sydney
+  affiliation:
+  - School of Mathematics and Statistics, The University of Sydney
+  - Computational Systems Biology Group, Children’s Medical Research Institute, Faculty of Medicine and Health, The University of Sydney
+  - Charles Perkins Centre, The University of Sydney
 output:
-    BiocStyle::html_document:
-        toc_newpage: true
-        fig_retina: NULL
+  BiocStyle::html_document:
+    toc_newpage: true
+    fig_retina: NULL
 package: BiocStyle
 vignette: >
-    %\VignetteIndexEntry{An introduction to scReClassify package}
-    %\VignetteEngine{knitr::rmarkdown}
-    %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{An introduction to scReClassify package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}

@@ -15,7 +15,7 @@
 #' are returned as a list.
 #' @usage multiAdaSampling(data, label, classifier="svm", percent=1,
 #' L=10, prob=FALSE, balance=FALSE, iter=3)
-#' @author Pengyi Yang
+#' @author Pengyi Yang, Taiyun Kim
 #' @importFrom randomForest randomForest
 #' @importFrom e1071 svm
 #' @importFrom stats median predict

@@ -17,6 +17,22 @@ An accuracy value.
 \description{
 This function calculates the accuracy of the prediction to the true label.
 }
+\examples{
+data("gse87795_subset")
+
+mat.expr = dat
+
+mat.pc = matPCs(mat.expr)
+
+result = multiAdaSampling(mat.pc, cellTypes, classifier = "svm",
+percent = 1, L = 10)
+
+final = result$final
+
+# Balanced accuracy
+bacc = bAccuracy(cellTypes, final)
+
+}
 \author{
-Pengyi Yang
+Pengyi Yang, Taiyun Kim
 }
