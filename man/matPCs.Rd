@@ -34,7 +34,7 @@ mat.expr <- gse87795_subset_sce
 mat.pc <- matPCs(mat.expr, assay = "logNorm")
 
 # to capture at least 70\% of overall variability in the dataset,
-mat.dim.reduct.70 = matPCs(mat.expr, assay = "logNorm", 0.7)
+mat.dim.reduct.70 <- matPCs(mat.expr, assay = "logNorm", 0.7)
 
 }
 \author{
