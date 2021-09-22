@@ -1,3 +1,11 @@
+## scReCkassify 0.99.5
+* Fixed NEWS to match the version bump
+
+
+## scReCkassify 0.99.4
+* Minor change to example in `matPC` function
+
+
 ## scReCkassify 0.99.3
 * Correct for any spelling errors in all documentations
 * Revising the package to address the comments from Bioconductor review

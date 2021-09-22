@@ -1,7 +1,7 @@
 Package: scReClassify
 Type: Package
 Title: scReClassify: post hoc cell type classification of single-cell RNA-seq data
-Version: 0.99.4
+Version: 0.99.5
 Authors@R: c(
     person("Pengyi", "Yang", email = "pengyi.yang@sydney.edu.au", 
     role = c("aut"), comment = c(ORCID = "0000-0003-1098-3138")),
