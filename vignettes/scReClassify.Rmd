@@ -67,10 +67,21 @@ suppressPackageStartupMessages({
     library(DT)
     library(mclust)
     library(dplyr)
+    library(SummarizedExperiment)
+    library(SingleCellExperiment)
 })
 
-data("gse87795_subset")
+data("gse87795_subset_sce")
+
+dat <- gse87795_subset_sce
+cellTypes <- gse87795_subset_sce$cellTypes
 ```
+
+`gse87795_subset_sce` is a `SingleCellExperiment` object of a mouse fetal liver
+development data deposited at Gene Expression Omnibus respository with accession
+ID GSE87795. The cell type information can be found on the `colData` of the 
+`SingleCellExperiment` object.
+
 
 ```{r}
 # Cell types
@@ -92,18 +103,31 @@ genes.
 
 ## Dimension reduction
 
-Prior to running scReClassify, we perform dimension reduction.  `matPCs` is a 
-tool in scReClassify to simplify this process. We select the number of principal
-components (PCs) that by sum explains at least 70% variance. 
+Prior to running scReClassify, we perform dimension reduction. `matPCs` is a 
+tool in scReClassify to simplify this process. In this function, a dimension 
+reduced matrix is returned with `n` principal components (PCs), where `n` is the
+number of principal components (PCs) that by sum explains at least 70% variance.
+
+The function accepts either a `matrix` or a `SingleCellExperiment` object. If 
+the `data` parameter is a `SingleCellExperiment` object, an `assay` variable 
+must be specified to perform dimension reduction on the correct assay. If the 
+`SingleCellExperiment` object `data` already has a 'PCA' in `reducedDimNames()`,
+the 'PCA' matrix of `n` columns are returned.
+
 
 ```{r}
-dat.selected = matPCs(dat, 0.7)
+dat.selected <- matPCs(dat, assay = "logNorm", 0.7)
 ```
 
 ## Synthetic noise (Demonstration purpose)
 
 Here in this example, we will synthetically generate varying degree of
-noise (10-50%) in sample labels.
+noise (10-50%) in sample labels. The purpose here is to simulate different level 
+of mislabeling in the data. Given a cell type label `cls.truth`, `noisyCls` 
+function will randomly select a `rho` percentage of cells from a given cell type
+and relabel to other cell types.
+
+Here, we create different degree of noise from 10% to 50%.
 
 ```{r}
 lab <- cellTypes
@@ -113,6 +137,7 @@ set.seed(1)
 noisyCls <- function(dat, rho, cls.truth){
     cls.noisy <- cls.truth
     names(cls.noisy) <- colnames(dat)
+    
     for(i in seq_len(length(table(cls.noisy)))) {
         # class label starts from 0
         if (i != length(table(cls.noisy))) {
@@ -137,6 +162,11 @@ cls.noisy04 <- noisyCls(dat.selected, rho=0.4, lab)
 cls.noisy05 <- noisyCls(dat.selected, rho=0.5, lab)
 ```
 
+With `noisyCls` function, we have relabeled  `r cls.noisy01`, `r cls.noisy01`, 
+`r cls.noisy01`, `r cls.noisy01` and `r cls.noisy01` number of cells for `rho` 
+equal to 0.1, 0.2, 0.3, 0.4 and 0.5 respectively.
+
+
 ## Use scReClassify to correct mislabeled cell types.
 
 Here in this example, we will only use `Support Vector machine (svm)` as
@@ -144,59 +174,77 @@ base classifier.
 
 #### Benchmark evaluation
 
+To benchmark scReClassify, we perform scReclassify to all degree of noise with 
+10 repeats. We measure the accuracy of scReClassify and the Adjusted Rand Index 
+(ARI) to measure the concordance of the reclassified cell type to the true cell 
+type label.
+
 ```{r}
 ###################################
 # SVM
 ###################################
-acc01 <- acc02 <- acc03 <- acc04 <- acc05 <- c()
-ari01 <- ari02 <- ari03 <- ari04 <- ari05 <- c()
 base <- "svm"
 set.seed(1)
-for(j in seq_len(10)) {
-  final <- multiAdaSampling(dat.selected, cls.noisy01, classifier=base, 
-                            percent=1, L=10)$final
-  ari01 <- c(ari01, mclust::adjustedRandIndex(lab, final))
-  acc01 <- c(acc01, bAccuracy(lab, final))
-  final <- multiAdaSampling(dat.selected, cls.noisy02, classifier=base, 
-                            percent=1, L=10)$final
-  ari02 <- c(ari02, mclust::adjustedRandIndex(lab, final))
-  acc02 <- c(acc02, bAccuracy(lab, final))
-  final <- multiAdaSampling(dat.selected, cls.noisy03, classifier=base, 
-                            percent=1, L=10)$final
-  ari03 <- c(ari03, mclust::adjustedRandIndex(lab, final))
-  acc03 <- c(acc03, bAccuracy(lab, final))
-  final <- multiAdaSampling(dat.selected, cls.noisy04, classifier=base, 
-                            percent=1, L=10)$final
-  ari04 <- c(ari04, mclust::adjustedRandIndex(lab, final))
-  acc04 <- c(acc04, bAccuracy(lab, final))
-  final <- multiAdaSampling(dat.selected, cls.noisy05, classifier=base, 
-                            percent=1, L=10)$final
-  ari05 <- c(ari05, mclust::adjustedRandIndex(lab, final))
-  acc05 <- c(acc05, bAccuracy(lab, final))
-}
+result = lapply(seq_len(10), function(j) {
+    final <- multiAdaSampling(dat.selected, cls.noisy01, classifier=base, 
+                              percent=1, L=10)$final
+    ari01 <- mclust::adjustedRandIndex(lab, final)
+    acc01 <- bAccuracy(lab, final)
+    
+    final <- multiAdaSampling(dat.selected, cls.noisy02, classifier=base, 
+                              percent=1, L=10)$final
+    ari02 <- mclust::adjustedRandIndex(lab, final)
+    acc02 <- bAccuracy(lab, final)
+    
+    final <- multiAdaSampling(dat.selected, cls.noisy03, classifier=base, 
+                              percent=1, L=10)$final
+    ari03 <- mclust::adjustedRandIndex(lab, final)
+    acc03 <- bAccuracy(lab, final)
+    
+    final <- multiAdaSampling(dat.selected, cls.noisy04, classifier=base, 
+                              percent=1, L=10)$final
+    ari04 <- mclust::adjustedRandIndex(lab, final)
+    acc04 <- bAccuracy(lab, final)
+    
+    final <- multiAdaSampling(dat.selected, cls.noisy05, classifier=base, 
+                              percent=1, L=10)$final
+    ari05 <- mclust::adjustedRandIndex(lab, final)
+    acc05 <- bAccuracy(lab, final)
+    
+    c(
+      acc01 = acc01,
+      acc02 = acc02,
+      acc03 = acc03,
+      acc04 = acc04,
+      acc05 = acc05,
+      ari01 = ari01,
+      ari02 = ari02,
+      ari03 = ari03,
+      ari04 = ari04,
+      ari05 = ari05
+    )
+})
 
-result = list(
-  acc01 = acc01,
-  acc02 = acc02,
-  acc03 = acc03,
-  acc04 = acc04,
-  acc05 = acc05,
-  ari01 = ari01,
-  ari02 = ari02,
-  ari03 = ari03,
-  ari04 = ari04,
-  ari05 = ari05
-)
+result = do.call(rbind, result)
+acc = result[,seq_len(5)]
+colnames(acc) = seq(from=0.1,to=0.5,by=0.1)
+
+ari = result[,seq(from= 6, to = 10)]
+colnames(ari) = seq(from=0.1,to=0.5,by=0.1)
+
 ```
 
 
+We can visualise the performance of the scReClassify. The boxes represent the 
+accuracy and the ARI after scReClassify. The red markers indicate the baseline 
+(prior to scReClassify). 
 
 
 ```{r}
 plot.new()
 par(mfrow = c(1,2))
-boxplot(acc01, acc02, acc03, acc04, acc05, col="lightblue", main="SVM Acc", 
-        ylim=c(0.45, 1))
+boxplot(acc, col="lightblue", main="SVM Accuracy", 
+        ylim=c(0.45, 1), xlab = "rho", ylab = "Accuracy")
 points(x=seq_len(5), y=c(
     bAccuracy(lab, cls.noisy01), 
     bAccuracy(lab, cls.noisy02),
@@ -204,8 +252,8 @@ points(x=seq_len(5), y=c(
     bAccuracy(lab, cls.noisy04),
     bAccuracy(lab, cls.noisy05)), 
     col="red3", pch=c(2,3,4,5,6), cex=1)
-boxplot(ari01, ari02, ari03, ari04, ari05, col="lightblue", main="SVM ARI", 
-        ylim=c(0.25, 1))
+boxplot(ari, col="lightblue", main="SVM ARI", 
+        ylim=c(0.25, 1), xlab = "rho", ylab = "ARI")
 points(x=seq_len(5), y=c(
     mclust::adjustedRandIndex(lab, cls.noisy01), 
     mclust::adjustedRandIndex(lab, cls.noisy02),
@@ -215,14 +263,26 @@ points(x=seq_len(5), y=c(
     col="red3", pch=c(2,3,4,5,6), cex=1)
 ```
 
+The plot shows that with scReClassify, cell type information have been refined 
+(boxes are higher than the red markers). The scReClassified results show 
+higher accuracy across noise levels 0.1 - 0.4 (i.e. closer to the true label).
+With the noise level 0.5, it is showing similar accuracy which is as expected 
+because the initial label contains equal amount of true and false information 
+and thus making it difficult for the algorithm to learn the true label. This 
+shows that scReClassify is also robust to noisy cell type labels. 
+
+
 # Part B. scReClassify (mislabeled cell type correction)
 
-Here we will use scReClassify on the actual cell type label from public 
-repository for GSE87795. 
+scReClassify has shown promising result with the synthetic noise we have 
+created. Here we will use scReClassify on the actual cell type label from public 
+repository. The data we will use is a mouse fetal liver dataset from GEO with an 
+accession ID GSE87795. 
+
 
 ```{r}
 # PCA procedure
-dat.pc <- matPCs(dat, 0.7)
+dat.pc <- matPCs(dat, assay = "logNorm", 0.7)
 dim(dat.pc)
 
 # run scReClassify
@@ -234,8 +294,7 @@ cellTypes.reclassify <- multiAdaSampling(dat.pc, cellTypes, classifier = "svm",
 End <- c("ITGA2B", "ITGB3")
 ```
 
-
-Below is a list of cell type labels classified to a different cell types after 
+Below is a table of cell type labels classified to a different cell types after 
 scReClassify.
 
 ```{r}
@@ -247,17 +306,20 @@ cbind(original=cellTypes[idx], reclassify=cellTypes.reclassify$final[idx]) %>%
 ```
 
 
-Here, we visualise the expression level of the two cells that are reclassified. 
-The boxplots are the marker gene expression levels grouped by cells types. The 
-expression level of the reclassified cells are highlighed as red marker.
+Here, we visualise the expression level of the a cells that is reclassified for 
+demontration purpose. The box plots are the marker gene expression levels 
+grouped by cells types. The expression level of the reclassified cell (Cell ID: 
+E13.5_C14) are highlighted as red marker.
 
 ```{r}
-c1 <- dat[, which(cellTypes=="Endothelial Cell")]
-c2 <- dat[, which(cellTypes=="Erythrocyte")]
-c3 <- dat[, which(cellTypes=="Hepatoblast")]
-c4 <- dat[, which(cellTypes=="Macrophage")]
-c5 <- dat[, which(cellTypes=="Megakaryocyte")]
-c6 <- dat[, which(cellTypes=="Mesenchymal Cell")]
+mat <- assay(dat, "logNorm")
+
+c1 <- mat[, which(cellTypes=="Endothelial Cell")]
+c2 <- mat[, which(cellTypes=="Erythrocyte")]
+c3 <- mat[, which(cellTypes=="Hepatoblast")]
+c4 <- mat[, which(cellTypes=="Macrophage")]
+c5 <- mat[, which(cellTypes=="Megakaryocyte")]
+c6 <- mat[, which(cellTypes=="Mesenchymal Cell")]
 cs <- rainbow(length(table(cellTypes)))
 
 
@@ -269,8 +331,9 @@ boxplot(c1[marker,], c2[marker,], c3[marker,],
         c4[marker,], c5[marker,], c6[marker,], 
         col=cs, main=marker, 
         names=c("Others", "Others", "Others", "Orignal", 
-                "Reclassified", "Others"), las=2)
-points(5, dat[marker, which(colnames(dat) %in% "E13.5_C14")], 
+                "Reclassified", "Others"), las=2, xlab = "Labels",
+        ylab = "log2FPKM")
+points(5, mat[marker, which(colnames(mat) %in% "E13.5_C14")], 
         pch=16, col="red", cex=2)
 
 marker <- End[2]
@@ -278,11 +341,17 @@ boxplot(c1[marker,], c2[marker,], c3[marker,],
         c4[marker,], c5[marker,], c6[marker,], 
         col=cs, main=marker, 
         names=c("Others", "Others", "Others", "Orignal", 
-                "Reclassified", "Others"), las=2)
-points(5, dat[marker, which(colnames(dat) %in% "E13.5_C14")], 
+                "Reclassified", "Others"), las=2, xlab = "Labels", 
+        ylab = "log2FPKM")
+points(5, mat[marker, which(colnames(mat) %in% "E13.5_C14")], 
         pch=16, col="red", cex=2)
 ```
-
+As shown in the boxplots above, the expression level of the reclassified cell 
+(red dot) is similar to the expression levels of the reclassified cell types in 
+a marker gene. This highlights that the E13.5_C14 cell has a similar expression 
+profiles to the reclassified cell types rather than its originally labeled cell 
+type. Thus, we were able to identify that E13.5_C14 potentially belongs to the 
+reclassified cell type with scReClassify.
 
 
 # SessionInfo

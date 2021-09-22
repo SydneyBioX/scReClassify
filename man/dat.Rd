@@ -3,14 +3,22 @@
 \docType{data}
 \name{dat}
 \alias{dat}
-\title{GSE827795 data}
+\alias{gse87795_subset_sce}
+\title{GSE827795 subset data}
 \format{
-An object of class \code{matrix} (inherits from \code{array}) with 1000 rows and 367 columns.
+An object of class \code{SingleCellExperiment} with 1000 rows and 367 columns.
 }
 \usage{
-data(gse87795_subset)
+gse87795_subset_sce
 }
 \description{
-A subset of expression matrix of GSE827795
+A SingleCellExperiment object containing a subset expression
+matrix of GSE827795. The data contains log2 transformed FPKM expression.
+
+GSE87795 is a mouse fetal liver development data containing 1000 genes,
+367 cells and 6 cell types.
+
+The original GSE87795 data and the study details can be found at this
+\href{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE87795}{link}
 }
 \keyword{datasets}

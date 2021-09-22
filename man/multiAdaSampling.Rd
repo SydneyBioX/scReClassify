@@ -4,24 +4,34 @@
 \alias{multiAdaSampling}
 \title{multi Adaptive Sampling function}
 \usage{
-multiAdaSampling(data, label, classifier="svm", percent=1,
-L=10, prob=FALSE, balance=FALSE, iter=3)
+multiAdaSampling(
+  data,
+  label,
+  classifier = "svm",
+  percent = 1,
+  L = 10,
+  prob = FALSE,
+  balance = TRUE,
+  iter = 3
+)
 }
 \arguments{
-\item{data}{A dimension reduced matrix.}
+\item{data}{A dimension reduced matrix from \code{matPCs}.}
 
 \item{label}{A vector of label information for each sample.}
 
-\item{classifier}{Base classifier model, either  "SVM" or "RF"}
+\item{classifier}{Base classifier model, either  "SVM" (\code{svm}) or "RF"
+\code{'rf'} is supported.}
 
-\item{percent}{Percentage of samples to select at each iteration during.}
+\item{percent}{Percentage of samples to select at each iteration.}
 
 \item{L}{Number of ensembles. Default to 10.}
 
 \item{prob}{logical flag to return sample's probabilities to each class.}
 
-\item{balance}{logical flag to down sample large cell types classes to the
-median of all class sizes.}
+\item{balance}{logical flag to if the cell types are balanced.
+If \code{FALSE}, down sample large cell types classes to the median of all class
+sizes.}
 
 \item{iter}{A number of iterations to perform adaSampling.}
 }
@@ -30,16 +40,21 @@ A final prediction, probabilities for each cell type and the model
 are returned as a list.
 }
 \description{
-Performs multiple Adaptive sampling to train a classifier model
+Performs multiple adaptive sampling to train a classifier model.
 }
 \examples{
-data("gse87795_subset")
 
-mat.expr = dat
+# Loading the data
+data("gse87795_subset_sce")
 
-mat.pc = matPCs(mat.expr)
+mat.expr <- gse87795_subset_sce
+cellTypes <- gse87795_subset_sce$cellTypes
 
-result = multiAdaSampling(mat.pc, cellTypes, classifier = "svm",
+# Get dimension reduced matrix. We are using `logNorm` assay from `mat.expr`.
+mat.pc <- matPCs(mat.expr, assay = "logNorm")
+
+# Here we are using Support Vector Machine as a base classifier.
+result <- multiAdaSampling(mat.pc, cellTypes, classifier = "svm",
 percent = 1, L = 10)
 }
 \author{

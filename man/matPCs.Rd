@@ -4,32 +4,37 @@
 \alias{matPCs}
 \title{matPCs function}
 \usage{
-matPCs(data, percentVar=0.8)
+matPCs(data, assay = NULL, percentVar = 0.8)
 }
 \arguments{
-\item{data}{Prediction model generated from "multiAdaSampling".}
+\item{data}{An expression matrix or a SingleCellExperiment object.}
 
-\item{percentVar}{A dimension reduced matrix.}
+\item{assay}{An assay to select if \code{data} is a SingleCellExperiment
+object}
+
+\item{percentVar}{The percentage of variance threshold. This is used to
+select number of Principal Components.}
 }
 \value{
 Dimensionally reduced matrix.
 }
 \description{
-Performs PCA on a given matrix
+Performs PCA on a given matrix and returns a dimension reduced
+matrix which captures at least 80\% (default) of overall variability.
 }
 \details{
 This function performs PCA to reduce the dimension of the gene
 expression matrix limited from 10 to 20 PCs.
 }
 \examples{
-data("gse87795_subset")
+data("gse87795_subset_sce")
 
-mat.expr = dat
+mat.expr <- gse87795_subset_sce
 
-mat.pc = matPCs(mat.expr)
+mat.pc <- matPCs(mat.expr, assay = "logNorm")
 
 # to capture at least 70\% of overall variability in the dataset,
-mat.dim.reduct.70 = matPCs(mat.expr, 0.7)
+mat.dim.reduct.70 = matPCs(mat.expr, assay = "logNorm", 0.7)
 
 }
 \author{

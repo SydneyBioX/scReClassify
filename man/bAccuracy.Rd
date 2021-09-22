@@ -7,9 +7,10 @@
 bAccuracy(cls.truth, final)
 }
 \arguments{
-\item{cls.truth}{A vector true class label.}
+\item{cls.truth}{A character vector of true class label.}
 
-\item{final}{A vector of final classified label prediction from XXX.}
+\item{final}{A vector of final classified label prediction from
+\code{multiAdaSampling}.}
 }
 \value{
 An accuracy value.
@@ -18,19 +19,22 @@ An accuracy value.
 This function calculates the accuracy of the prediction to the true label.
 }
 \examples{
-data("gse87795_subset")
+data("gse87795_subset_sce")
 
-mat.expr = dat
+mat.expr <- gse87795_subset_sce
+cellTypes <- gse87795_subset_sce$cellTypes
 
-mat.pc = matPCs(mat.expr)
+# Get dimension reduced matrix. We are using `logNorm` assay from `mat.expr`.
+mat.pc <- matPCs(mat.expr, assay = "logNorm")
 
-result = multiAdaSampling(mat.pc, cellTypes, classifier = "svm",
+# Here we are using Support Vector Machine as a base classifier.
+result <- multiAdaSampling(mat.pc, cellTypes, classifier = "svm",
 percent = 1, L = 10)
 
-final = result$final
+final <- result$final
 
 # Balanced accuracy
-bacc = bAccuracy(cellTypes, final)
+bacc <- bAccuracy(cellTypes, final)
 
 }
 \author{
