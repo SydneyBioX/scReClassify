@@ -116,7 +116,7 @@ the 'PCA' matrix of `n` columns are returned.
 
 
 ```{r}
-dat.selected <- matPCs(dat, assay = "logNorm", 0.7)
+reducedDim(dat, "matPCs") <- matPCs(dat, assay = "logNorm", 0.7)
 ```
 
 ## Synthetic noise (Demonstration purpose)
@@ -155,11 +155,11 @@ noisyCls <- function(dat, rho, cls.truth){
     return(cls.noisy)
 }
 
-cls.noisy01 <- noisyCls(dat.selected, rho=0.1, lab)
-cls.noisy02 <- noisyCls(dat.selected, rho=0.2, lab)
-cls.noisy03 <- noisyCls(dat.selected, rho=0.3, lab)
-cls.noisy04 <- noisyCls(dat.selected, rho=0.4, lab)
-cls.noisy05 <- noisyCls(dat.selected, rho=0.5, lab)
+cls.noisy01 <- noisyCls(t(reducedDim(dat, "matPCs")), rho=0.1, lab)
+cls.noisy02 <- noisyCls(t(reducedDim(dat, "matPCs")), rho=0.2, lab)
+cls.noisy03 <- noisyCls(t(reducedDim(dat, "matPCs")), rho=0.3, lab)
+cls.noisy04 <- noisyCls(t(reducedDim(dat, "matPCs")), rho=0.4, lab)
+cls.noisy05 <- noisyCls(t(reducedDim(dat, "matPCs")), rho=0.5, lab)
 ```
 
 With `noisyCls` function, we have relabeled  `r cls.noisy01`, `r cls.noisy01`, 
@@ -186,28 +186,28 @@ type label.
 base <- "svm"
 set.seed(1)
 result = lapply(seq_len(10), function(j) {
-    final <- multiAdaSampling(dat.selected, cls.noisy01, classifier=base, 
-                              percent=1, L=10)$final
+    final <- multiAdaSampling(dat, cls.noisy01, reducedDimName = "matPCs", 
+                            classifier=base, percent=1, L=10)$final
     ari01 <- mclust::adjustedRandIndex(lab, final)
     acc01 <- bAccuracy(lab, final)
     
-    final <- multiAdaSampling(dat.selected, cls.noisy02, classifier=base, 
-                              percent=1, L=10)$final
+    final <- multiAdaSampling(dat, cls.noisy02, reducedDimName = "matPCs", 
+                            classifier=base,  percent=1, L=10)$final
     ari02 <- mclust::adjustedRandIndex(lab, final)
     acc02 <- bAccuracy(lab, final)
     
-    final <- multiAdaSampling(dat.selected, cls.noisy03, classifier=base, 
-                              percent=1, L=10)$final
+    final <- multiAdaSampling(dat, cls.noisy03, reducedDimName = "matPCs", 
+                            classifier=base, percent=1, L=10)$final
     ari03 <- mclust::adjustedRandIndex(lab, final)
     acc03 <- bAccuracy(lab, final)
     
-    final <- multiAdaSampling(dat.selected, cls.noisy04, classifier=base, 
-                              percent=1, L=10)$final
+    final <- multiAdaSampling(dat, cls.noisy04, reducedDimName = "matPCs", 
+                            classifier=base, percent=1, L=10)$final
     ari04 <- mclust::adjustedRandIndex(lab, final)
     acc04 <- bAccuracy(lab, final)
     
-    final <- multiAdaSampling(dat.selected, cls.noisy05, classifier=base, 
-                              percent=1, L=10)$final
+    final <- multiAdaSampling(dat, cls.noisy05, reducedDimName = "matPCs", 
+                            classifier=base, percent=1, L=10)$final
     ari05 <- mclust::adjustedRandIndex(lab, final)
     acc05 <- bAccuracy(lab, final)
     
@@ -282,13 +282,14 @@ accession ID GSE87795.
 
 ```{r}
 # PCA procedure
-dat.pc <- matPCs(dat, assay = "logNorm", 0.7)
-dim(dat.pc)
+reducedDim(dat, "matPCs") <- matPCs(dat, assay = "logNorm", 0.7)
+
 
 # run scReClassify
 set.seed(1)
-cellTypes.reclassify <- multiAdaSampling(dat.pc, cellTypes, classifier = "svm", 
-                                        percent = 1, L = 10)
+cellTypes.reclassify <- multiAdaSampling(dat, cellTypes, 
+                                        reducedDimName = "matPCs", 
+                                        classifier = "svm", percent = 1, L = 10)
 
 # Verification by marker genes
 End <- c("ITGA2B", "ITGB3")

@@ -22,7 +22,7 @@ test_that(
         result2 = 20L
         
         # Number of PCs returned
-        expect_identical(result1, nrow(matPCs(t(mat), percentVar = 0.5)))
-        expect_identical(result2, nrow(matPCs(t(mat), percentVar = 0.8)))
+        expect_identical(result1, ncol(matPCs(t(mat), percentVar = 0.5)))
+        expect_identical(result2, ncol(matPCs(t(mat), percentVar = 0.8)))
     }
 )

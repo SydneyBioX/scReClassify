@@ -66,5 +66,5 @@ matPCs <- function(data, assay = NULL, percentVar=0.8) {
     m <- ifelse(m < 10, 10, m)
     pcs <- pca$x[,seq_len(m)]
 
-    return(t(pcs))
+    return(pcs)
 }

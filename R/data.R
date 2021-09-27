@@ -10,7 +10,7 @@
 #' [link](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE87795)
 #'
 #'
-#' @name dat
+#' @name gse87795_subset_sce
 #' @docType data
 #'
 "gse87795_subset_sce"

@@ -1,3 +1,6 @@
+## scReCkassify 0.99.6
+* Revised further to address comments/feedbacks
+
 ## scReCkassify 0.99.5
 * Fixed NEWS to match the version bump
 

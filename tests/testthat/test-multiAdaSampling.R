@@ -23,7 +23,7 @@ test_that(
         
         pc = matPCs(dat, percentVar = 0.8)
         result = multiAdaSampling(
-            pc, 
+            data = pc, 
             label = noise_label, 
             classifier = "svm"
         )

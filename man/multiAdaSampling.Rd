@@ -7,6 +7,7 @@
 multiAdaSampling(
   data,
   label,
+  reducedDimName = NULL,
   classifier = "svm",
   percent = 1,
   L = 10,
@@ -19,6 +20,9 @@ multiAdaSampling(
 \item{data}{A dimension reduced matrix from \code{matPCs}.}
 
 \item{label}{A vector of label information for each sample.}
+
+\item{reducedDimName}{A name of the \code{reducedDim} to use. This must be
+specified if \code{data} is a SingleCellExperiment object.}
 
 \item{classifier}{Base classifier model, either  "SVM" (\code{svm}) or "RF"
 \code{'rf'} is supported.}
@@ -44,6 +48,8 @@ Performs multiple adaptive sampling to train a classifier model.
 }
 \examples{
 
+library(SingleCellExperiment)
+
 # Loading the data
 data("gse87795_subset_sce")
 
@@ -51,11 +57,11 @@ mat.expr <- gse87795_subset_sce
 cellTypes <- gse87795_subset_sce$cellTypes
 
 # Get dimension reduced matrix. We are using `logNorm` assay from `mat.expr`.
-mat.pc <- matPCs(mat.expr, assay = "logNorm")
+reducedDim(mat.expr, "matPCs") <- matPCs(mat.expr, assay = "logNorm")
 
 # Here we are using Support Vector Machine as a base classifier.
-result <- multiAdaSampling(mat.pc, cellTypes, classifier = "svm",
-percent = 1, L = 10)
+result <- multiAdaSampling(mat.expr, cellTypes, reducedDimName = "matPCs", 
+classifier = "svm", percent = 1, L = 10)
 }
 \author{
 Pengyi Yang, Taiyun Kim
