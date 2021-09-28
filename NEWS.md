@@ -1,3 +1,6 @@
+## scReCkassify 0.99.7
+* Removed global assignment in multiAdaSampling.
+
 ## scReCkassify 0.99.6
 * Revised further to address comments/feedbacks
 

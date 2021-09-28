@@ -41,8 +41,8 @@
 #' classifier = "svm", percent = 1, L = 10)
 #' @export multiAdaSampling
 multiAdaSampling <- function(data, label, reducedDimName = NULL, 
-                            classifier="svm", percent=1, L=10, prob=FALSE, 
-                            balance=TRUE, iter=3) {
+                             classifier="svm", percent=1, L=10, prob=FALSE, 
+                             balance=TRUE, iter=3) {
     # If SCE
     if (is(data, "SingleCellExperiment")) {
         if (is.null(reducedDimName)) {
@@ -69,7 +69,7 @@ multiAdaSampling <- function(data, label, reducedDimName = NULL,
         model <- c()
         prob.mat <- c()
         
-        iteration <- lapply(seq_len(iter), function(i) {
+        for (i in seq_len(iter)) {
             if (classifier == "rf") {
                 model <- randomForest::randomForest(t(X), factor(Y),
                                                     ntree = 100)
@@ -87,6 +87,9 @@ multiAdaSampling <- function(data, label, reducedDimName = NULL,
             if (!(classifier %in% c("svm", "rf"))) {
                 stop("Classifier ", classifier, " is unknown.")
             }
+            
+            X <- c()
+            Y <- c()
             
             XY_update <- lapply(seq_len(ncol(prob.mat)), function(j) {
                 voteClass <- prob.mat[label==colnames(prob.mat)[j],]
@@ -119,13 +122,11 @@ multiAdaSampling <- function(data, label, reducedDimName = NULL,
             cur_Y = lapply(XY_update, function(xy) {
                 xy$Y
             })
-            cur_X = do.call(cbind, cur_X)
-            cur_Y = do.call(c, cur_Y)
-            X <<- cur_X
-            Y <<- cur_Y
-            model
-        })
-        iteration[[iter]]
+            X <- do.call(cbind, cur_X)
+            Y <- do.call(c, cur_Y)
+        }
+        
+        model
     })
     
     predictMat <- matrix(0, nrow=ncol(mat), ncol=length(table(label)))
