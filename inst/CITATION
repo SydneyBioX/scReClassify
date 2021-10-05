@@ -1,0 +1,20 @@
+citHeader("To cite scReClassify in publications use:")
+citEntry(entry = "Article",
+         title        = "scReClassify: post hoc cell type classification of single-cell RNA-seq data",
+         author       = personList(as.person("Taiyun Kim"),
+                                   as.person("Kitty Lo"),
+                                   as.person("Thomas A Geddes"),
+                                   as.person("Hani Jieun Kim"),
+                                   as.person("Jean Yee Hwa Yang"),
+                                   as.person("Pengyi Yang")),
+         journal      = "BMC Genomics",
+         year         = "2019",
+         volume       = "20",
+         number       = "913",
+         url          = "https://doi.org/10.1186/s12864-019-6305-x",
+         textVersion  =
+           paste("Kim, T., Lo, K., Geddes, T. A., Kim, H. J., Yang, J. Y. H., Yang, P.",
+                 "scReClassify: post hoc cell type classification of single-cell RNA-seq data.",
+                 "BMC Genomics, 20, 913 (2019)",
+                 "doi: https://doi.org/10.1186/s12864-019-6305-x")
+)

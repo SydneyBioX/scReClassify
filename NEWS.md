@@ -1,3 +1,6 @@
+## scReCkassify 0.99.8
+* Included citation for the package
+
 ## scReCkassify 0.99.7
 * Removed global assignment in multiAdaSampling.
 
